@@ -1,126 +1,154 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kerem Kesia - Psychology Practice</title>
-    <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-</head>
-<body>
-    <!-- WhatsApp Button -->
-    <a href="https://wa.me/YOUR_PHONE_NUMBER" class="whatsapp-button" target="_blank">
-        <i class="fab fa-whatsapp"></i> Chat with Kerem
-    </a>
+// Chat functionality
+const chatMessages = document.getElementById('chat-messages');
+const userInput = document.getElementById('user-input');
 
-    <!-- Hero Section -->
-    <section class="hero">
-        <div class="hero-content">
-            <h1>Welcome to Kerem Kesia's Psychology Practice</h1>
-            <p>Your journey to emotional well-being starts here</p>
-            <button class="cta-button" onclick="window.open('https://wa.me/YOUR_PHONE_NUMBER', '_blank')">
-                <i class="fab fa-whatsapp"></i> Start Your Healing Journey
-            </button>
-        </div>
-    </section>
+// Simple AI responses
+const aiResponses = {
+    'hello': 'Olá! Como posso ajudar você hoje?',
+    'help': 'Estou aqui para ajudar você a entender melhor suas necessidades emocionais. O que você gostaria de saber?',
+    'anxiety': 'A ansiedade é uma experiência comum. Você gostaria de aprender algumas técnicas de enfrentamento?',
+    'depression': 'A depressão é uma condição séria que requer ajuda profissional. Você gostaria de agendar uma consulta?',
+    'stress': 'O gerenciamento do estresse é importante. Você gostaria de aprender algumas técnicas de relaxamento?',
+    'therapy': 'Oferecemos várias abordagens terapêuticas adaptadas às suas necessidades. Você gostaria de saber mais?',
+    'session': 'As sessões padrão têm duração de 50 minutos, mas podemos agendar sessões mais longas de acordo com suas necessidades.',
+    'insurance': 'Sim, aceitamos a maioria dos planos de saúde. Entre em contato conosco para verificar a cobertura do seu convênio.',
+    'default': 'Entendo. Você gostaria de saber mais sobre nossos serviços de terapia?'
+};
 
-    <!-- Parallax Sections -->
-    <section class="parallax-section" style="background-image: url('images/landscape1.jpg')">
-        <div class="content">
-            <h2>Understanding Your Mind</h2>
-            <p>Professional guidance for your mental well-being</p>
-        </div>
-    </section>
+function sendMessage() {
+    const message = userInput.value.trim();
+    if (message) {
+        // Add user message
+        addMessage(message, true);
+        
+        // Clear input
+        userInput.value = '';
+        
+        // Simulate AI response
+        setTimeout(() => {
+            const response = getAIResponse(message.toLowerCase());
+            addMessage(response, false);
+        }, 1000);
+    }
+}
 
-    <section class="parallax-section" style="background-image: url('images/landscape2.jpg')">
-        <div class="content">
-            <h2>Personal Growth</h2>
-            <p>Discover your inner strength</p>
-        </div>
-    </section>
+function addMessage(text, isUser) {
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `message ${isUser ? 'user-message' : 'ai-message'}`;
+    messageDiv.textContent = text;
+    chatMessages.appendChild(messageDiv);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+}
 
-    <section class="parallax-section" style="background-image: url('images/landscape3.jpg')">
-        <div class="content">
-            <h2>Emotional Healing</h2>
-            <p>Navigate through life's challenges</p>
-        </div>
-    </section>
+function getAIResponse(message) {
+    // Check for keywords in the message
+    for (const [keyword, response] of Object.entries(aiResponses)) {
+        if (message.includes(keyword)) {
+            return response;
+        }
+    }
+    return aiResponses.default;
+}
 
-    <section class="parallax-section" style="background-image: url('images/landscape4.jpg')">
-        <div class="content">
-            <h2>Professional Support</h2>
-            <p>Expert guidance when you need it most</p>
-        </div>
-    </section>
+// Enhanced Parallax effect
+window.addEventListener('scroll', () => {
+    const parallaxSections = document.querySelectorAll('.parallax-section');
+    const scrolled = window.pageYOffset;
+    
+    parallaxSections.forEach((section, index) => {
+        // Calculate different speeds for each section
+        const speed = 0.5 + (index * 0.1);
+        const yPos = -(scrolled * speed);
+        
+        // Apply parallax effect
+        section.style.backgroundPositionY = `${yPos}px`;
+        
+        // Add a subtle scale effect
+        const scale = 1 + (scrolled * 0.0005);
+        section.style.transform = `scale(${scale})`;
+    });
+});
 
-    <!-- AI Chat Section -->
-    <section class="chat-section">
-        <h2>Chat with AI Assistant</h2>
-        <div class="chat-container">
-            <div id="chat-messages"></div>
-            <div class="chat-input">
-                <input type="text" id="user-input" placeholder="Type your message...">
-                <button onclick="sendMessage()">Send</button>
-            </div>
-        </div>
-    </section>
+// Newsletter form submission
+const newsletterForm = document.querySelector('.newsletter-form');
+newsletterForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const email = newsletterForm.querySelector('input[type="email"]').value;
+    alert(`Thank you for subscribing with ${email}!`);
+    newsletterForm.reset();
+});
 
-    <!-- Newsletter Section -->
-    <section class="newsletter-section">
-        <h2>Stay Updated</h2>
-        <form class="newsletter-form">
-            <input type="email" placeholder="Enter your email" required>
-            <button type="submit">Subscribe</button>
-        </form>
-    </section>
+// Add smooth scrolling for all links
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const targetId = this.getAttribute('href');
+        const targetElement = document.querySelector(targetId);
+        
+        if (targetElement) {
+            const navbarHeight = document.querySelector('.navbar').offsetHeight;
+            const targetPosition = targetElement.getBoundingClientRect().top + window.pageYOffset - navbarHeight;
+            
+            window.scrollTo({
+                top: targetPosition,
+                behavior: 'smooth'
+            });
+        }
+    });
+});
 
-    <!-- FAQ Section -->
-    <section class="faq-section">
-        <h2>Frequently Asked Questions</h2>
-        <div class="faq-container">
-            <div class="faq-item">
-                <h3>What types of therapy do you offer?</h3>
-                <p>We offer various therapeutic approaches including cognitive-behavioral therapy, psychodynamic therapy, and mindfulness-based interventions.</p>
-            </div>
-            <div class="faq-item">
-                <h3>How long are the sessions?</h3>
-                <p>Standard sessions are 50 minutes long, but we can arrange longer sessions based on your needs and availability.</p>
-            </div>
-            <div class="faq-item">
-                <h3>Do you accept insurance?</h3>
-                <p>Yes, we accept most major insurance plans. Please contact us for specific details about your insurance coverage.</p>
-            </div>
-        </div>
-    </section>
+// Add animation on scroll with Intersection Observer
+const observerOptions = {
+    threshold: 0.2,
+    rootMargin: '0px 0px -100px 0px'
+};
 
-    <!-- Footer -->
-    <footer>
-        <div class="footer-content">
-            <div class="footer-section">
-                <h3>Connect with Kerem</h3>
-                <div class="social-links">
-                    <a href="#"><i class="fab fa-facebook"></i></a>
-                    <a href="#"><i class="fab fa-instagram"></i></a>
-                    <a href="#"><i class="fab fa-linkedin"></i></a>
-                    <a href="https://wa.me/YOUR_PHONE_NUMBER"><i class="fab fa-whatsapp"></i></a>
-                </div>
-            </div>
-            <div class="footer-section">
-                <h3>Payment Methods</h3>
-                <p><i class="fas fa-credit-card"></i> Credit Cards</p>
-                <p>PIX</p>
-            </div>
-            <div class="footer-section">
-                <h3>Contact</h3>
-                <p>Email: contact@keremkesia.com</p>
-                <p>Phone: +XX XXX XXX XXXX</p>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            <p>&copy; 2024 Kerem Kesia Psychology. All rights reserved.</p>
-        </div>
-    </footer>
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            
+            // Add neuron-like animation elements
+            if (entry.target.classList.contains('parallax-section')) {
+                addNeuronLines(entry.target);
+            }
+        }
+    });
+}, observerOptions);
 
-    <script src="script.js"></script>
-</body>
-</html> 
+// Observe all sections
+document.querySelectorAll('section').forEach(section => {
+    observer.observe(section);
+});
+
+// Function to add neuron-like animation elements
+function addNeuronLines(section) {
+    // Remove existing neuron lines
+    const existingLines = section.querySelectorAll('.neuron-line');
+    existingLines.forEach(line => line.remove());
+    
+    // Add new neuron lines
+    for (let i = 0; i < 5; i++) {
+        const line = document.createElement('div');
+        line.className = 'neuron-line';
+        
+        // Random position and delay
+        const top = Math.random() * 100;
+        const left = Math.random() * 100;
+        const delay = Math.random() * 2;
+        
+        line.style.top = `${top}%`;
+        line.style.left = `${left}%`;
+        line.style.animationDelay = `${delay}s`;
+        
+        section.appendChild(line);
+    }
+}
+
+// Initialize neuron lines for the hero section
+document.addEventListener('DOMContentLoaded', () => {
+    const heroSection = document.querySelector('.hero');
+    if (heroSection) {
+        addNeuronLines(heroSection);
+    }
+}); 
