@@ -4,12 +4,15 @@ const userInput = document.getElementById('user-input');
 
 // Simple AI responses
 const aiResponses = {
-    'hello': 'Hello! How can I help you today?',
-    'help': 'I\'m here to help you understand your emotional needs better. What would you like to know?',
-    'anxiety': 'Anxiety is a common experience. Would you like to learn some coping techniques?',
-    'depression': 'Depression is a serious condition that requires professional help. Would you like to schedule a consultation?',
-    'stress': 'Stress management is important. Would you like to learn some relaxation techniques?',
-    'default': 'I understand. Would you like to learn more about our therapy services?'
+    'hello': 'Olá! Como posso ajudar você hoje?',
+    'help': 'Estou aqui para ajudar você a entender melhor suas necessidades emocionais. O que você gostaria de saber?',
+    'anxiety': 'A ansiedade é uma experiência comum. Você gostaria de aprender algumas técnicas de enfrentamento?',
+    'depression': 'A depressão é uma condição séria que requer ajuda profissional. Você gostaria de agendar uma consulta?',
+    'stress': 'O gerenciamento do estresse é importante. Você gostaria de aprender algumas técnicas de relaxamento?',
+    'therapy': 'Oferecemos várias abordagens terapêuticas adaptadas às suas necessidades. Você gostaria de saber mais?',
+    'session': 'As sessões padrão têm duração de 50 minutos, mas podemos agendar sessões mais longas de acordo com suas necessidades.',
+    'insurance': 'Sim, aceitamos a maioria dos planos de saúde. Entre em contato conosco para verificar a cobertura do seu convênio.',
+    'default': 'Entendo. Você gostaria de saber mais sobre nossos serviços de terapia?'
 };
 
 function sendMessage() {
@@ -47,13 +50,22 @@ function getAIResponse(message) {
     return aiResponses.default;
 }
 
-// Parallax effect
+// Enhanced Parallax effect
 window.addEventListener('scroll', () => {
     const parallaxSections = document.querySelectorAll('.parallax-section');
-    parallaxSections.forEach(section => {
-        const scrolled = window.pageYOffset;
-        const rate = scrolled * 0.5;
-        section.style.backgroundPositionY = `${rate}px`;
+    const scrolled = window.pageYOffset;
+    
+    parallaxSections.forEach((section, index) => {
+        // Calculate different speeds for each section
+        const speed = 0.5 + (index * 0.1);
+        const yPos = -(scrolled * speed);
+        
+        // Apply parallax effect
+        section.style.backgroundPositionY = `${yPos}px`;
+        
+        // Add a subtle scale effect
+        const scale = 1 + (scrolled * 0.0005);
+        section.style.transform = `scale(${scale})`;
     });
 });
 
@@ -70,21 +82,36 @@ newsletterForm.addEventListener('submit', (e) => {
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function (e) {
         e.preventDefault();
-        document.querySelector(this.getAttribute('href')).scrollIntoView({
-            behavior: 'smooth'
-        });
+        const targetId = this.getAttribute('href');
+        const targetElement = document.querySelector(targetId);
+        
+        if (targetElement) {
+            const navbarHeight = document.querySelector('.navbar').offsetHeight;
+            const targetPosition = targetElement.getBoundingClientRect().top + window.pageYOffset - navbarHeight;
+            
+            window.scrollTo({
+                top: targetPosition,
+                behavior: 'smooth'
+            });
+        }
     });
 });
 
-// Add animation on scroll
+// Add animation on scroll with Intersection Observer
 const observerOptions = {
-    threshold: 0.1
+    threshold: 0.2,
+    rootMargin: '0px 0px -100px 0px'
 };
 
 const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
         if (entry.isIntersecting) {
-            entry.target.classList.add('fade-in');
+            entry.target.classList.add('visible');
+            
+            // Add neuron-like animation elements
+            if (entry.target.classList.contains('parallax-section')) {
+                addNeuronLines(entry.target);
+            }
         }
     });
 }, observerOptions);
@@ -92,4 +119,36 @@ const observer = new IntersectionObserver((entries) => {
 // Observe all sections
 document.querySelectorAll('section').forEach(section => {
     observer.observe(section);
+});
+
+// Function to add neuron-like animation elements
+function addNeuronLines(section) {
+    // Remove existing neuron lines
+    const existingLines = section.querySelectorAll('.neuron-line');
+    existingLines.forEach(line => line.remove());
+    
+    // Add new neuron lines
+    for (let i = 0; i < 5; i++) {
+        const line = document.createElement('div');
+        line.className = 'neuron-line';
+        
+        // Random position and delay
+        const top = Math.random() * 100;
+        const left = Math.random() * 100;
+        const delay = Math.random() * 2;
+        
+        line.style.top = `${top}%`;
+        line.style.left = `${left}%`;
+        line.style.animationDelay = `${delay}s`;
+        
+        section.appendChild(line);
+    }
+}
+
+// Initialize neuron lines for the hero section
+document.addEventListener('DOMContentLoaded', () => {
+    const heroSection = document.querySelector('.hero');
+    if (heroSection) {
+        addNeuronLines(heroSection);
+    }
 }); 
